@@ -36,10 +36,11 @@ Or
 ```
 The Link component can accept the following closure actions that it will call after the corresponding event:
 
-* [onSuccess](plaid.com/docs/api/#onsuccess-callback)
-* [onOpen](plaid.com/docs/api/#open-function)
-* [onLoad](plaid.com/docs/api/#parameter-reference)
-* [onExit](plaid.com/docs/api/#onexit-callback)
+* [onSuccess](https://plaid.com/docs/api/#onsuccess-callback)
+* [onOpen](https://plaid.com/docs/api/#open-function)
+* [onLoad](https://plaid.com/docs/api/#parameter-reference)
+* [onExit](https://plaid.com/docs/api/#onexit-callback)
+* [onEvent](https://plaid.com/docs/#onevent-callback)
 * [onError] (not supported by plaid, custom-built logic will fire this if plaid script fails to load.)
 
 Once a user has successfully onboarded via Plaid Link, the `onSuccess` action will be called with the `public_token` and a `metadata` object passed as the arguments. From there, you should follow the [instructions](https://github.com/plaid/link#step-3-write-server-side-handler) for exchanging the `public_token` for an `access_token`.
@@ -62,6 +63,9 @@ Or
 ## Installation
 * `git clone <repository-url>` this repository
 * `cd ember-plaid-v2`
+* install bower through brew
+* `bower install ember`
+
 * `yarn install`
 
 ## Running

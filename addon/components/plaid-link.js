@@ -1,15 +1,14 @@
-/* global Plaid:false */
-// Sets Plaid as a global read-only variable for eslint
-
 import Component from '@ember/component';
 import layout from '../templates/components/plaid-link';
+import { inject as service } from '@ember/service';
 
-const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token'];
+const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'apiVersion'];
 const DEFAULT_LABEL = 'Link Bank Account'; // Displayed on button if no block is passed to component
 
 export default Component.extend({
   layout,
   tagName: 'button',
+  plaid: service(),
   label: DEFAULT_LABEL,
 
   // Link action Parameters to pass into component via view
@@ -18,6 +17,7 @@ export default Component.extend({
   onLoad() {},
   onExit() {},
   onError() {},
+  onEvent() {},
 
   // Link Parameters to pass into component via config file
   // Complete documentation: https://plaid.com/docs/api/#parameter-reference
@@ -27,44 +27,30 @@ export default Component.extend({
   product: null,
   webhook: null,
   token: null,
+  apiVersion: 'v2',
 
   // Private
   _link: null,
-
-  // TODO: Implement onEvent callback
+  _options: null,
 
   init() {
     this._super(...arguments);
-    const options = Object.assign(this.getProperties(OPTIONS), {
+    this._options = Object.assign(this.getProperties(OPTIONS), {
       onLoad: this._onLoad.bind(this),
       onSuccess: this._onSuccess.bind(this),
-      onExit: this._onExit.bind(this)
+      onExit: this._onExit.bind(this),
+      onEvent: this._onEvent.bind(this),
     });
-
-    return new Ember.RSVP.Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
-      script.onload = resolve;
-      script.onerror = reject;
-      document.getElementsByTagName('head')[0].appendChild(script);
-    })
-      .then(() => {
-        this._link = window.Plaid.create(options);
-      })
-      .catch(() => {
-        this.get('_onError')();
-      })
+    this.get('plaid').injectScript().catch(this._onError.bind(this));
   },
 
   click() {
     this.send('clicked');
-    this._link.open();
+    this.get('plaid').open(this._options).catch(this._onError.bind(this));
   },
 
-  _onError() {
-    this.send('errored');
+  _onError(err) {
+    this.send('errored', err);
   },
 
   _onLoad() {
@@ -79,9 +65,11 @@ export default Component.extend({
     this.send('succeeded', token, metadata);
   },
 
-  actions: {
-    // Send closure actions passed into component
+  _onEvent: function(eventName, metadata) {
+    this.send('eventEmitted', eventName, metadata);
+  },
 
+  actions: { // Send closure actions passed into component, if available
     clicked() {
       this.get('onOpen')();
     },
@@ -94,12 +82,16 @@ export default Component.extend({
       this.get('onExit')(error, metadata);
     },
 
-    errored() {
-      this.get('onError')();
+    errored(err) {
+      this.get('onError')(err);
     },
 
     succeeded(token, metadata) {
       this.get('onSuccess')(token, metadata);
+    },
+
+    eventEmitted(eventName, metadata) {
+      this.get('onEvent')(eventName, metadata);
     }
   }
 });

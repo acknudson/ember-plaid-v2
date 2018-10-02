@@ -1,0 +1,15 @@
+{{#plaid-link id="link-plaid-button"
+  onError=(action "onError")
+  onOpen=(action "onOpen")
+  onLoad=(action "onLoad")
+  onEvent=(action "onEvent")
+  onSuccess=(action "onSuccess")
+  onExit=(action "onExit")}}
+  Click to launch Plaid Link Component
+{{/plaid-link}}
+
+<ol>
+  {{#each events as |event|}}
+    <li>{{event}}</li>
+  {{/each}}
+</ol>
