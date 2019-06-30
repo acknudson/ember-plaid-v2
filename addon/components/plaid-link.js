@@ -4,7 +4,7 @@
 import Component from '@ember/component';
 import layout from '../templates/components/plaid-link';
 
-const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token'];
+const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview'];
 const DEFAULT_LABEL = 'Link Bank Account'; // Displayed on button if no block is passed to component
 
 export default Component.extend({
@@ -19,6 +19,9 @@ export default Component.extend({
   onExit() {},
   onError() {},
 
+  // Optional Link Parameter for user ex: { legalName: 'John Appleseed', emailAddress: 'jappleseed@yourapp.com' }
+  user: null,
+
   // Link Parameters to pass into component via config file
   // Complete documentation: https://plaid.com/docs/api/#parameter-reference
   clientName: null,
@@ -27,6 +30,9 @@ export default Component.extend({
   product: null,
   webhook: null,
   token: null,
+  language: null,
+  countryCodes: null,
+  isWebview: null,
 
   // Private
   _link: null,
@@ -34,13 +40,14 @@ export default Component.extend({
   // TODO: Implement onEvent callback
 
   init() {
-    this._super(...arguments);
-    const options = Object.assign(this.getProperties(OPTIONS), {
-      onLoad: this._onLoad.bind(this),
-      onSuccess: this._onSuccess.bind(this),
-      onExit: this._onExit.bind(this)
+    let scope = this;
+    scope._super(...arguments);
+    const options = Object.assign(scope.getProperties(OPTIONS), {
+      onLoad: scope._onLoad.bind(scope),
+      onSuccess: scope._onSuccess.bind(scope),
+      onExit: scope._onExit.bind(scope),
+      user: scope.user
     });
-
     return new Ember.RSVP.Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.type = 'text/javascript';
@@ -49,13 +56,11 @@ export default Component.extend({
       script.onload = resolve;
       script.onerror = reject;
       document.getElementsByTagName('head')[0].appendChild(script);
-    })
-      .then(() => {
-        this._link = window.Plaid.create(options);
-      })
-      .catch(() => {
-        this.get('_onError')();
-      })
+    }).then(() => {
+      scope._link = window.Plaid.create(options);
+    }).catch(() => {
+      scope.get('_onError').bind(scope)();
+    });
   },
 
   click() {

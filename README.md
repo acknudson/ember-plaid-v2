@@ -44,6 +44,7 @@ The Link component can accept the following closure actions that it will call af
 
 Once a user has successfully onboarded via Plaid Link, the `onSuccess` action will be called with the `public_token` and a `metadata` object passed as the arguments. From there, you should follow the [instructions](https://github.com/plaid/link#step-3-write-server-side-handler) for exchanging the `public_token` for an `access_token`.
 
+
 Once you have the `public_token`, you can use it to initialize a plaid-link component in "update mode". Update mode allows the user to update Plaid when they change their online-banking credentials or MFA.
 
 ```hbs
@@ -56,6 +57,25 @@ Or
 {{#plaid-link onSuccess=(action "onSuccess") token=$public_token}}
   Update Bank Account
 {{/plaid-link}}
+```
+
+### Auth additional features
+
+In order to support all of the features provided by Auth you need to ask your account manager and also supply a user parameter with an object:
+
+```javascript
+{
+  legalName: CLIENTNAME,
+  emailAddress: CLIENTEMAIL
+}
+```
+
+like this:
+
+```hbs
+{{plaid-link
+  onSuccess=(action "onSuccess")
+  user=user}}
 ```
 
 # Contributing

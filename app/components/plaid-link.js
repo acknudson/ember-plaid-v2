@@ -9,5 +9,8 @@ export default PlaidLink.extend({
   key: plaidConfig.key,
   product: plaidConfig.product,
   webhook: plaidConfig.webhook,
-  token: plaidConfig.token
+  token: plaidConfig.token,
+  language: plaidConfig.language,
+  countryCodes: plaidConfig.countryCodes,
+  isWebview: plaidConfig.isWebview
 });
