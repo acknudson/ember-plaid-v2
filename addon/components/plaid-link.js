@@ -58,6 +58,11 @@ export default Component.extend({
       document.getElementsByTagName('head')[0].appendChild(script);
     }).then(() => {
       scope._link = window.Plaid.create(options);
+      if (window.plaid_link_handlers) {
+        window.plaid_link_handlers.push(scope._link);
+      } else {
+        window.plaid_link_handlers = [scope._link];
+      }
     }).catch(() => {
       scope.get('_onError').bind(scope)();
     });
