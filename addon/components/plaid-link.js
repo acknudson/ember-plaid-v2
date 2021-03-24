@@ -4,7 +4,7 @@
 import Component from '@ember/component';
 import layout from '../templates/components/plaid-link';
 
-const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview'];
+const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview', 'receivedRedirectUri'];
 const DEFAULT_LABEL = 'Link Bank Account'; // Displayed on button if no block is passed to component
 
 export default Component.extend({
@@ -33,6 +33,7 @@ export default Component.extend({
   language: null,
   countryCodes: null,
   isWebview: null,
+  receivedRedirectUri: null,
 
   // Private
   _link: null,
@@ -46,7 +47,9 @@ export default Component.extend({
       onLoad: scope._onLoad.bind(scope),
       onSuccess: scope._onSuccess.bind(scope),
       onExit: scope._onExit.bind(scope),
-      user: scope.user
+      user: scope.user,
+      isWebview: scope.isWebview,
+      receivedRedirectUri: scope.receivedRedirectUri
     });
     return new Ember.RSVP.Promise((resolve, reject) => {
       const script = document.createElement('script');
