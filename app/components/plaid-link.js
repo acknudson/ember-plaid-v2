@@ -12,6 +12,5 @@ export default PlaidLink.extend({
   token: plaidConfig.token,
   language: plaidConfig.language,
   countryCodes: plaidConfig.countryCodes,
-  isWebview: plaidConfig.isWebview,
-  receivedRedirectUri: plaidConfig.receivedRedirectUri
+  isWebview: plaidConfig.isWebview
 });

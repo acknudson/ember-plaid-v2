@@ -4,7 +4,7 @@
 import Component from '@ember/component';
 import layout from '../templates/components/plaid-link';
 
-const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview', 'receivedRedirectUri'];
+const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview'];
 const DEFAULT_LABEL = 'Link Bank Account'; // Displayed on button if no block is passed to component
 
 export default Component.extend({
