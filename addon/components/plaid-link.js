@@ -4,7 +4,7 @@
 import Component from '@ember/component';
 import layout from '../templates/components/plaid-link';
 
-const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes', 'isWebview'];
+const OPTIONS = ['clientName', 'env', 'key', 'product', 'webhook', 'token', 'language', 'countryCodes'];
 const DEFAULT_LABEL = 'Link Bank Account'; // Displayed on button if no block is passed to component
 
 export default Component.extend({
@@ -18,6 +18,7 @@ export default Component.extend({
   onLoad() {},
   onExit() {},
   onError() {},
+  onEvent() {},
 
   // Optional Link Parameter for user ex: { legalName: 'John Appleseed', emailAddress: 'jappleseed@yourapp.com' }
   user: null,
@@ -38,8 +39,6 @@ export default Component.extend({
   // Private
   _link: null,
 
-  // TODO: Implement onEvent callback
-
   init() {
     let scope = this;
     scope._super(...arguments);
@@ -47,6 +46,7 @@ export default Component.extend({
       onLoad: scope._onLoad.bind(scope),
       onSuccess: scope._onSuccess.bind(scope),
       onExit: scope._onExit.bind(scope),
+      onEvent: scope._onEvent.bind(scope),
       user: scope.user,
       isWebview: scope.isWebview,
       receivedRedirectUri: scope.receivedRedirectUri
@@ -92,6 +92,10 @@ export default Component.extend({
     this.send('succeeded', token, metadata);
   },
 
+  _onEvent: function(eventName, metadata) {
+    this.send('event', eventName, metadata);
+  },
+
   actions: {
     // Send closure actions passed into component
 
@@ -113,6 +117,10 @@ export default Component.extend({
 
     succeeded(token, metadata) {
       this.get('onSuccess')(token, metadata);
+    },
+
+    event(eventName, metadata) {
+      this.get('onEvent')(eventName, metadata);
     }
   }
 });
